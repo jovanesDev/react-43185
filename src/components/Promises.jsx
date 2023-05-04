@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import Jugador from "./Jugador";
+import axios from "axios";
 
 const jugadores = [
+  {
+    id: "1",
+    nombre: "zapatilla nike",
+    img: "link del zapatilla del nike",
+    stock: 10,
+    precio: 2000,
+  },
   {
     nombre: "Leo",
     apellido: "Messi",
@@ -20,6 +28,7 @@ const jugadores = [
 const Promises = () => {
   const [loading, setLoading] = useState(false);
   const [players, setPlayers] = useState([]);
+  const [harry, setHarry] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -41,9 +50,30 @@ const Promises = () => {
       })
       .catch((err) => {
         console.log(err);
-        alert('algo salio mal ')
-      })
+        alert("algo salio mal ");
+      });
     //   .finally(() => console.log("la promesa se acabo !!!! "));
+  }, []);
+
+  // useEffect(() => {
+
+  //   fetch("https://harry-potter-api.onrender.com/db")
+  //   .then((res) => res.json())
+  //     .then((res) => setHarry([...harry,res.info]))
+  //     .catch((err) => console.log(err));
+  // }, []);
+
+  useEffect(() => {
+    const getHarryPotter = async () => {
+      try {
+        const res = await axios.get("https://harry-potter-api.onrender.com/db");
+        console.log(res.data);
+        setHarry([...harry,res.data.info])
+      } catch (error) {
+        console.log(error)
+      }
+    };
+    getHarryPotter();
   }, []);
 
   return (
@@ -54,6 +84,7 @@ const Promises = () => {
         players.map(({ nombre, apellido }, index) => (
           <Jugador nombre={nombre} apellido={apellido} key={index} />
         ))}
+      {harry.length > 0 && harry[0]?.map((info,index) => <h1 key={index}>{info.contenido}</h1>)}
     </div>
   );
 };
